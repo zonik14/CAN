@@ -1,4 +1,4 @@
-import os
+
 import pandas as pd
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
@@ -15,9 +15,6 @@ precision_list = []
 recall_list = []
 f1_list = []
 mAP_list = []
-
-# Set the working directory
-os.chdir("C:/Users/zemar/OneDrive/Ambiente de Trabalho/train")
 
 # Load and preprocess the data
 df = pd.read_csv("electrical_1.csv")
