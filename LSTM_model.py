@@ -8,7 +8,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
 
-# Load and preprocess the data
+#Load and preprocess the data
 df = pd.read_csv("electrical_1.csv")
 df2 = pd.read_csv("electrical_2.csv")
 df3 = pd.read_csv("electrical_3.csv")
@@ -46,19 +46,19 @@ allmerged['Hour'] = time_readings.dt.hour
 allmerged['Minute'] = time_readings.dt.minute
 allmerged['Second'] = time_readings.dt.second
 
-# Check for missing values
+#Check for missing values
 mv = allmerged.isnull().sum()
 
-# Split the dataset into features and labels
+#Split the dataset into features and labels
 x = allmerged.drop(['Time','Detector'], axis=1)
 y = allmerged['Detector']
 y = y.replace({'ON': 1, 'OFF': 0})
 
-# Encode categorical variable 'Cause' using label encoding
+#Encode categorical variable 'Cause' using label encoding
 label_encoder = LabelEncoder()
 x['Cause'] = label_encoder.fit_transform(x['Cause'])
 
-# Split the data into train and test sets
+#Split the data into train and test sets
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
 x_train = x_train.astype(int)
@@ -70,23 +70,23 @@ y_test = y_test.astype(int)
 print(x_test.dtypes)
 print(y_test.dtypes)
 
-# Convert features and labels to numpy arrays
+#Convert features and labels to numpy arrays
 x_train = np.array(x_train)
 y_train = np.array(y_train)
 x_test = np.array(x_test)
 y_test = np.array(y_test)
 
-# Normalize the features (optional but recommended for neural networks)
+#Normalize the features (optional but recommended for neural networks)
 x_train = (x_train - np.mean(x_train, axis=0)) / np.std(x_train, axis=0)
 x_test = (x_test - np.mean(x_test, axis=0)) / np.std(x_test, axis=0)
 
-# Reshape the input data for LSTM (input shape: [samples, time steps, features])
+#Reshape the input data for LSTM (input shape: [samples, time steps, features])
 time_steps = 1  # Number of time steps (can be adjusted as needed)
 features = x_train.shape[1]
 x_train = x_train.reshape(x_train.shape[0], time_steps, features)
 x_test = x_test.reshape(x_test.shape[0], time_steps, features)
 
-# Initialize variables for evaluation metrics
+#Initialize variables for evaluation metrics
 accuracy_scores = []
 precision_scores = []
 recall_scores = []
@@ -94,28 +94,18 @@ f1_scores = []
 classification_reports = []
 mAP_scores = []
 
-# Run the model 100 times
+#Run the model 100 times
 for i in range(100):
-    # Initialize a sequential model
+    
     model = Sequential()
-
-    # Add LSTM layer
     model.add(LSTM(64, activation='relu', input_shape=(time_steps, features)))
-
-    # Add output layer
     model.add(Dense(1, activation='sigmoid'))
-
-    # Compile the model
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-
-    # Fit the model to the training data
     model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=0)
-
-    # Make predictions on the test data
     y_pred = model.predict(x_test)
     y_pred_classes = np.round(y_pred)
 
-    # Calculate the evaluation metrics
+    #EVALUATION METRICS
     accuracy = accuracy_score(y_test, y_pred_classes)
     accuracy_scores.append(accuracy)
 
@@ -134,14 +124,14 @@ for i in range(100):
     mAP = average_precision_score(y_test, y_pred)
     mAP_scores.append(mAP)
 
-# Calculate the average of evaluation metrics
+#AVERAGE OF THE EVALUATION METRICS
 avg_accuracy = np.mean(accuracy_scores)
 avg_precision = np.mean(precision_scores)
 avg_recall = np.mean(recall_scores)
 avg_f1 = np.mean(f1_scores)
 avg_mAP = np.mean(mAP_scores)
 
-# Print the average evaluation metrics
+
 print("Average Accuracy:", avg_accuracy)
 print("Average Precision:", avg_precision)
 print("Average Recall:", avg_recall)
