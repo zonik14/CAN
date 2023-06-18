@@ -1,5 +1,4 @@
-import os 
-os.chdir("C:/Users/zemar/OneDrive/Ambiente de Trabalho/train")
+
 # IMPORTS
 import pandas as pd
 import xgboost as xgb
