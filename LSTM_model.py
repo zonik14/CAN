@@ -1,4 +1,4 @@
-import os
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -7,8 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
 
-# Set the working directory
-os.chdir("C:/Users/zemar/OneDrive/Ambiente de Trabalho/train")
 
 # Load and preprocess the data
 df = pd.read_csv("electrical_1.csv")
