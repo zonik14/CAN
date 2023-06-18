@@ -6,17 +6,17 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.metrics import average_precision_score
 from sklearn.preprocessing import LabelEncoder
 
-# Number of iterations
+#Number of iterations
 num_iterations = 100
 
-# Initialize lists to store evaluation metrics
+#Initialize lists to store evaluation metrics
 accuracy_list = []
 precision_list = []
 recall_list = []
 f1_list = []
 mAP_list = []
 
-# Load and preprocess the data
+#Load and preprocess the data
 df = pd.read_csv("electrical_1.csv")
 df2 = pd.read_csv("electrical_2.csv")
 df3 = pd.read_csv("electrical_3.csv")
@@ -54,31 +54,24 @@ allmerged['Hour'] = time_readings.dt.hour
 allmerged['Minute'] = time_readings.dt.minute
 allmerged['Second'] = time_readings.dt.second
 allmerged
-# Check for missing values
+#Check for missing values
 mv = allmerged.isnull().sum()
 
-# Split the dataset into features and labels
+#Split the dataset into features and labels
 x = allmerged.drop(['Time','Detector'], axis=1)
 y = allmerged['Detector']
 
-# Encode categorical variable 'Cause' using label encoding
+#Encode categorical variable 'Cause' using label encoding
 label_encoder = LabelEncoder()
 x['Cause'] = label_encoder.fit_transform(x['Cause'])
 
 for _ in range(num_iterations):
-    # Split the data into train and test sets
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-
-    # Initialize an SVM classifier
     model = SVC()
-
-    # Fit the model to the training data
     model.fit(x_train, y_train)
-
-    # Make predictions on the test data
     y_pred = model.predict(x_test)
 
-    # Calculate the evaluation metrics
+    #MODEL EVALUATION
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average=None)
     recall = recall_score(y_test, y_pred, average=None)
@@ -86,22 +79,19 @@ for _ in range(num_iterations):
     y_test_binary = y_test.astype(bool).astype(int)
     y_pred_binary = y_pred.astype(bool).astype(int)
     mAP = average_precision_score(y_test_binary, y_pred_binary, average='micro')
-
-    # Append the metrics to the respective lists
     accuracy_list.append(accuracy)
     precision_list.append(precision)
     recall_list.append(recall)
     f1_list.append(f1)
     mAP_list.append(mAP)
 
-# Calculate the average of the evaluation metrics
+#AVERAGE OF THE EVALUATION RESULTS
 avg_accuracy = sum(accuracy_list) / num_iterations
 avg_precision = sum(precision_list) / num_iterations
 avg_recall = sum(recall_list) / num_iterations
 avg_f1 = sum(f1_list) / num_iterations
 avg_mAP = sum(mAP_list) / num_iterations
 
-# Print the average evaluation metrics
 print("Average Accuracy:", avg_accuracy)
 print("Average Precision:", avg_precision)
 print("Average Recall:", avg_recall)
